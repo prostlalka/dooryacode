@@ -1,6 +1,10 @@
+from calendar import calendar
+from datetime import time
+
 import telebot
 from mysql.connector import connect
 import configparser
+from telebot.types import LabeledPrice
 
 config = configparser.ConfigParser()
 config.read("settings.ini")
@@ -12,6 +16,25 @@ connection = connect(user=config["mysql"]["username"], password=config["mysql"][
                      database=config["mysql"]["database"])
 print(connection)
 
+
+
+@bot.pre_checkout_query_handler(func=lambda query: True)
+def checkout(pre_checkout_query):
+    bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True,
+                                  error_message="Оплата не прошла - попробуйте, пожалуйста, еще раз,"
+                                                "или свяжитесь с администратором бота.")
+
+
+# при корректной оплате
+@bot.message_handler(content_types=['successful_payment'])
+def got_payment(message):
+
+    # здесь подключение к базе данных и внесение данных в таблицу
+    bot.send_message(message.chat.id, 'Ваш заказ был успешным❤')
+    update_account = f"UPDATE roof_users SET money = money + 100 WHERE tgid = '{message.chat.id}'"
+    with connection.cursor() as cursor:
+         cursor.execute(update_account)
+         connection.commit()
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
@@ -40,6 +63,12 @@ def get_text_messages(message):
             cursor.execute(check_account)
             result = cursor.fetchall()
             bot.send_message(message.from_user.id, f"Ваш баланс: {result[0][0]} рублей")
+    elif message.text == "/pay":
+
+        bot.send_invoice(chat_id=user, title="Пополнение баланса бота", description='Пополним баланс на 100 рублей',
+                         invoice_payload=user,
+                         provider_token=config["tg"]["pay_token"], currency="RUB",
+                         prices=[LabeledPrice(label='100 рублей', amount=100*100)], start_parameter="bot_pay")
 
     else:
         check_account = f"SELECT money FROM roof_users WHERE tgid='{user}'"
