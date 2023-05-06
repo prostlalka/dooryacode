@@ -22,7 +22,7 @@ def got_payment(message):
 
     # здесь подключение к базе данных и внесение данных в таблицу
     bot.send_message(message.chat.id, 'Ваш заказ был успешным❤')
-    DB.execute(f"UPDATE roof_users SET money = money + 100 WHERE tgid = '{message.chat.id}'")
+    DB().execute(f"UPDATE roof_users SET money = money + 100 WHERE tgid = '{message.chat.id}'")
 
 
 @bot.message_handler(content_types=['text'])
@@ -31,9 +31,9 @@ def get_text_messages(message):
     user = message.from_user.id
 
     if message.text == "/start":
-        result = DB.execute(f"SELECT * FROM roof_users WHERE tgid='{user}'")
+        result = DB().execute(f"SELECT * FROM roof_users WHERE tgid='{user}'")
         if result == []:
-            DB.execute(f"INSERT INTO roof_users VALUES ('{user}', 50, 0)")
+            DB().execute(f"INSERT INTO roof_users VALUES ('{user}', 50, 0)")
             bot.send_message(message.from_user.id, "Welcome")
         else:
             bot.send_message(message.from_user.id, "Already on")
@@ -50,16 +50,16 @@ def get_text_messages(message):
                          prices=[LabeledPrice(label='100 рублей', amount=100*100)], start_parameter="bot_pay")
 
     else:
-        money = DB.execute(f"SELECT money FROM roof_users WHERE tgid='{user}'")
+        money = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user}'")
         if money[0][0] >= 5:
-            address = DB.execute(f"SELECT * FROM table_drcd_final WHERE full_address='{message.text}'")
+            address = DB().execute(f"SELECT * FROM table_drcd_final WHERE full_address='{message.text}'")
             if address != []:
                 for row in address:
                     print(row);
                     bot.send_message(message.from_user.id,
                                      f"Мы в гости к {row[0]} в {row[3]} подьезд на {row[5]} этаж в {row[4]} квартиру")
                     bot.send_message(message.from_user.id, row[6])
-                DB.execute(f"UPDATE roof_users SET money = money - 5 WHERE tgid = '{user}'")
+                DB().execute(f"UPDATE roof_users SET money = money - 5 WHERE tgid = '{user}'")
             else:
                 bot.send_message(message.from_user.id, "Мы не смогли найти этот адрес")
         else:
