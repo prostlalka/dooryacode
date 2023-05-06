@@ -41,7 +41,7 @@ def get_text_messages(message):
 
 
     elif message.text == "/info":
-        result = DB.execute(f"SELECT money FROM roof_users WHERE tgid='{user}'")
+        result = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user}'")
         bot.send_message(message.from_user.id, f"Ваш баланс: {result[0][0]} рублей")
     elif message.text == "/pay":
         bot.send_invoice(chat_id=user, title="Пополнение баланса бота", description='Пополним баланс на 100 рублей',
