@@ -4,7 +4,7 @@ import mysql.connector
 import configparser
 
 
-class DB():
+class DB:
 
     def __init__(self, **kwargs):
         config = configparser.ConfigParser()

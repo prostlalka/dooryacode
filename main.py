@@ -1,5 +1,5 @@
 import telebot
-import DB
+from DB import DB
 import configparser
 from telebot.types import LabeledPrice
 
@@ -67,3 +67,5 @@ def get_text_messages(message):
 
 
 bot.polling(none_stop=True, interval=0)
+
+
