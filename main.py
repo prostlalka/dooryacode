@@ -27,7 +27,7 @@ def got_payment(message):
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     user = message.from_user.id
-    print("roofbot:  " + user)
+    print("roofbot:  " + str(user))
     print("roofbot:  " + message.text)
 
     if message.text == "/start":
