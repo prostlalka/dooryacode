@@ -59,12 +59,12 @@ def get_text_messages(message):
             if address:
                 if len(address) < 10:
                     for row in address:
-                        print("roofbot:  " + row)
+                        print("roofbot:  " + str(row))
                         bot.send_message(message.from_user.id,
                                          f"Мы в гости к {row[0]} в {row[3]} подьезд на {row[5]} этаж в {row[4]} квартиру. {row[6]}")
                 else:
                     for i in range(10):
-                        print("roofbot:  " + address[i])
+                        print("roofbot:  " + str(address[i]))
                         bot.send_message(message.from_user.id,
                                          f"Мы в гости к {address[i][0]} в {address[i][3]} подьезд на {address[i][5]} этаж в {address[i][4]} квартиру. {address[i][6]}")
                 DB().execute(f"UPDATE roof_users SET money = money - 5 WHERE tgid = '{user}'")
