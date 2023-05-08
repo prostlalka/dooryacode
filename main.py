@@ -52,13 +52,19 @@ def get_text_messages(message):
     else:
         money = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user}'")
         if money[0][0] >= 5:
-            address = DB().execute(f"SELECT * FROM table_drcd_final WHERE full_address='{message.text}'")
-            if address != []:
-                for row in address:
-                    print(row);
-                    bot.send_message(message.from_user.id,
-                                     f"Мы в гости к {row[0]} в {row[3]} подьезд на {row[5]} этаж в {row[4]} квартиру")
-                    bot.send_message(message.from_user.id, row[6])
+            input_text = message.text
+            address = DB().execute(f"SELECT * FROM table_drcd_final WHERE full_address='{input_text.replace(',','')}'")
+            if address:
+                if len(address) < 10:
+                    for row in address:
+                        print(row)
+                        bot.send_message(message.from_user.id,
+                                         f"Мы в гости к {row[0]} в {row[3]} подьезд на {row[5]} этаж в {row[4]} квартиру. {row[6]}")
+                else:
+                    for i in range(10):
+                        print(address[i])
+                        bot.send_message(message.from_user.id,
+                                         f"Мы в гости к {address[i][0]} в {address[i][3]} подьезд на {address[i][5]} этаж в {address[i][4]} квартиру. {address[i][6]}")
                 DB().execute(f"UPDATE roof_users SET money = money - 5 WHERE tgid = '{user}'")
             else:
                 bot.send_message(message.from_user.id, "Мы не смогли найти этот адрес")
