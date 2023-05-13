@@ -33,7 +33,12 @@ def get_text_messages(message):
     user_sql = ""
     now = datetime.now()
     user_datetime = now.strftime("%d/%m/%Y %H:%M:%S")
-    user_money = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user_tgid}'")[0][0]
+    print(f"SELECT money FROM roof_users WHERE tgid='{user_tgid}'")
+    user_money = 0
+    try:
+        user_money = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user_tgid}'")[0][0]
+    except:
+        user_money = 50
 
     if message.text == "/start":
         result = DB().execute(f"SELECT * FROM roof_users WHERE tgid='{user_tgid}'")
@@ -47,11 +52,12 @@ def get_text_messages(message):
 
     elif message.text == "/info":
         result = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user_tgid}'")
-        user_response = f"Ваш баланс: {result[0][0]} рублей"
+        user_response = f"Ваш баланс: {user_money} рублей"
         bot.send_message(message.from_user.id, user_response)
 
     elif message.text == "/pay":
-        bot.send_invoice(chat_id=user_tgid, title="Пополнение баланса бота", description='Пополним баланс на 100 рублей',
+        bot.send_invoice(chat_id=user_tgid, title="Пополнение баланса бота",
+                         description='Пополним баланс на 100 рублей',
                          invoice_payload=user_tgid,
                          provider_token=config["tg"]["pay_token"], currency="RUB",
                          prices=[LabeledPrice(label='100 рублей', amount=100 * 100)], start_parameter="bot_pay")
@@ -78,7 +84,10 @@ def get_text_messages(message):
         else:
             user_response = "Пополните баланс"
             bot.send_message(message.from_user.id, user_response)
-    print(f"INSERT INTO logs VALUES ('{user_tgid}', '{user_datetime}', '{user_money}', '{user_request}', '{user_response}', '{user_sql}')")
-    DB().execute(f"INSERT INTO logs VALUES ('{user_tgid}', '{user_datetime}', '{user_money}', '{user_request}', '{user_response}', \"{user_sql}\")")
+    print(
+        f"INSERT INTO logs VALUES ('{user_tgid}', '{user_datetime}', '{user_money}', '{user_request}', '{user_response}', '{user_sql}')")
+    DB().execute(
+        f"INSERT INTO logs VALUES ('{user_tgid}', '{user_datetime}', '{user_money}', '{user_request}', '{user_response}', \"{user_sql}\")")
+
 
 bot.polling(none_stop=True, interval=0)
