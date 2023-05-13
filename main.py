@@ -38,7 +38,7 @@ def get_text_messages(message):
     try:
         user_money = DB().execute(f"SELECT money FROM roof_users WHERE tgid='{user_tgid}'")[0][0]
     except:
-        user_money = 50
+        user_money = 0
 
     if message.text == "/start":
         result = DB().execute(f"SELECT * FROM roof_users WHERE tgid='{user_tgid}'")
