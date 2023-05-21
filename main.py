@@ -56,12 +56,13 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, user_response)
 
     elif message.text == "/pay":
-        bot.send_invoice(chat_id=user_tgid, title="Пополнение баланса бота",
-                         description='Пополним баланс на 100 рублей',
-                         invoice_payload=user_tgid,
-                         provider_token=config["tg"]["pay_token"], currency="RUB",
-                         prices=[LabeledPrice(label='100 рублей', amount=100 * 100)], start_parameter="bot_pay")
+        #bot.send_invoice(chat_id=user_tgid, title="Пополнение баланса бота",
+        #                 description='Пополним баланс на 100 рублей',
+        #                 invoice_payload=user_tgid,
+        #                 provider_token=config["tg"]["pay_token"], currency="RUB",
+        #                 prices=[LabeledPrice(label='100 рублей', amount=100 * 100)], start_parameter="bot_pay")
 
+        bot.send_message(message.from_user.id, "Для пополнения баланса пишите @cringe_woolf")
     else:
         if user_money >= 5:
             input_text = message.text
@@ -82,7 +83,7 @@ def get_text_messages(message):
                 bot.send_message(message.from_user.id, user_response)
 
         else:
-            user_response = "Пополните баланс"
+            user_response = "Пополните баланс, для пополнения пишите @cringe_woolf"
             bot.send_message(message.from_user.id, user_response)
     print(
         f"INSERT INTO logs VALUES ('{user_tgid}', '{user_datetime}', '{user_money}', '{user_request}', '{user_response}', '{user_sql}')")
